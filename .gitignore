@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Secrets & env
+.env
+*.pem
+*.key
+secrets.yaml
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# Telethon sessions
+*.session
+*.session-journal
+
+# Logs
+*.log
+logs/
+
+# Cache
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Calibration artifacts
+calibration_results/
+test_results/
+output/
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Sample data
+sample.csv

@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "AI-Дайджест",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/main.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Калибровка промптов",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/calibrate.py",
+            "args": ["sample.csv"],
+            "console": "integratedTerminal"
+        }
+    ]
+}

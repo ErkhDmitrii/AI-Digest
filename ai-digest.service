@@ -1,0 +1,17 @@
+[Unit]
+Description=AI-Digest Microservice
+After=network.target
+
+[Service]
+Type=simple
+User=ai-digest
+WorkingDirectory=/opt/ai-digest
+Environment=PATH=/opt/ai-digest/venv/bin:/usr/bin
+ExecStart=/opt/ai-digest/venv/bin/python main.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

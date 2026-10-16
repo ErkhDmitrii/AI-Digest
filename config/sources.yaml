@@ -1,0 +1,44 @@
+# Источники данных для AI-Дайджест
+# Типы: rss, telegram, web
+
+sources:
+  # === RSS-фиды ===
+
+  - name: "Грузия Online (apsny.ge)"
+    type: rss
+    url: "https://freenewsapi.ai/v1/rss?host=www.apsny.ge&size=50"
+    whitelist: false
+
+  # === Telegram-каналы ===
+  - name: "Фаэтон | Грузия"
+    type: telegram
+    channel: "faeton_georgia"
+    whitelist: false
+
+  - name: "NEWSGEORGIA"
+    type: telegram
+    channel: "NGnewsgeorgia"
+    whitelist: false
+
+  - name: "Батуми MY BATUMI"
+    type: telegram
+    channel: "mybatumi_info"
+    whitelist: false
+
+  - name: "Финансы и бизнес в Грузии"
+    type: telegram
+    channel: "financeingeorgia"
+    whitelist: false
+
+  # === Web-парсеры (сайты без RSS) ===
+  - name: "Matsne (Законодательство)"
+    type: web
+    url: "https://matsne.gov.ge"
+    parser: "matsne"
+    whitelist: true
+
+  - name: "Реестр предприятий"
+    type: web
+    url: "https://enreg.reestri.gov.ge/main.php"
+    parser: "enreg"
+    whitelist: false
