@@ -1,7 +1,7 @@
 """Telegram-коллектор — собирает посты из каналов через Telethon."""
 import logging
 from datetime import datetime, timezone
-from typing import List, Dict
+from typing import Dict, List
 
 from collectors.base import BaseCollector
 
@@ -18,8 +18,9 @@ async def _get_tg_client():
     if _tg_client and _tg_init_done:
         return _tg_client
 
-    from config.settings import settings
     from telethon import TelegramClient
+
+    from config.settings import settings
 
     if not settings.TELETHON_API_ID or not settings.TELETHON_API_HASH:
         log.error("Telethon: API_ID/API_HASH не настроены")
@@ -61,9 +62,11 @@ class TelegramCollector(BaseCollector):
 
                 title = msg.text[:200].replace("\n", " ")
                 url = f"https://t.me/{channel}/{msg.id}"
-                published_at = msg.date if msg.date else datetime.now(timezone.utc)
+                published_at = msg.date if msg.date else datetime.now(
+                    timezone.utc)
 
-                articles.append(self._normalize_item(title, msg.text, url, published_at))
+                articles.append(self._normalize_item(
+                    title, msg.text, url, published_at))
 
             log.info("TG: собрано %d постов из @%s", len(articles), channel)
 

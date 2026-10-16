@@ -37,7 +37,6 @@ def assemble_digest(issue_number: int, summaries: dict) -> str:
         lines.append("─" * 40)
         lines.append("")
 
-    lines.append("🤖 Дайджест создан с помощью AI. Источники проверены.")
     lines.append("")
 
     return "\n".join(lines)

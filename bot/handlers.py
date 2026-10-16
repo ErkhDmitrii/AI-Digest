@@ -3,21 +3,13 @@ import logging
 from typing import Optional
 
 from aiogram import Bot, Dispatcher, F
-from aiogram.types import (
-    Message,
-    CallbackQuery,
-    InlineKeyboardMarkup,
-    InlineKeyboardButton,
-)
 from aiogram.filters import Command
+from aiogram.types import (CallbackQuery, InlineKeyboardButton,
+                           InlineKeyboardMarkup, Message)
 
 from config.settings import settings
-from db.repository import (
-    save_digest,
-    update_digest_decision,
-    mark_digest_published,
-    get_next_issue_number,
-)
+from db.repository import (get_next_issue_number, mark_digest_published,
+                           save_digest, update_digest_decision)
 
 log = logging.getLogger("bot.handlers")
 
@@ -40,9 +32,12 @@ async def send_draft_to_admin(digest_text: str):
 
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [
-            InlineKeyboardButton(text="✅ Опубликовать", callback_data=f"pub:{digest_id}"),
-            InlineKeyboardButton(text="✏️ Редактировать", callback_data=f"edit:{digest_id}"),
-            InlineKeyboardButton(text="❌ Отклонить", callback_data=f"rej:{digest_id}"),
+            InlineKeyboardButton(text="✅ Опубликовать",
+                                 callback_data=f"pub:{digest_id}"),
+            InlineKeyboardButton(text="✏️ Редактировать",
+                                 callback_data=f"edit:{digest_id}"),
+            InlineKeyboardButton(text="❌ Отклонить",
+                                 callback_data=f"rej:{digest_id}"),
         ]
     ])
 
@@ -142,8 +137,10 @@ async def handle_edited_text(message: Message):
 
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [
-            InlineKeyboardButton(text="✅ Опубликовать", callback_data=f"pub:{digest_id}"),
-            InlineKeyboardButton(text="❌ Отклонить", callback_data=f"rej:{digest_id}"),
+            InlineKeyboardButton(text="✅ Опубликовать",
+                                 callback_data=f"pub:{digest_id}"),
+            InlineKeyboardButton(text="❌ Отклонить",
+                                 callback_data=f"rej:{digest_id}"),
         ]
     ])
 

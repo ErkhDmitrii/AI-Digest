@@ -1,6 +1,8 @@
 """Инициализация SQLite базы данных."""
-import aiosqlite
 import logging
+
+import aiosqlite
+
 from config.settings import settings
 
 log = logging.getLogger("db.database")
@@ -42,11 +44,13 @@ CREATE INDEX IF NOT EXISTS idx_articles_text_hash ON articles(text_hash);
 CREATE INDEX IF NOT EXISTS idx_articles_published ON articles(published_at);
 """
 
+
 async def get_db():
     """Возвращает асинхронное соединение с БД."""
     db = await aiosqlite.connect(settings.DB_PATH)
     db.row_factory = aiosqlite.Row
     return db
+
 
 def init_db():
     """Синхронная инициализация БД (вызывается при старте)."""

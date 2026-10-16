@@ -1,7 +1,7 @@
 """RSS-коллектор — собирает статьи из RSS-лент."""
 import logging
 from datetime import datetime, timezone
-from typing import List, Dict
+from typing import Dict, List
 
 import feedparser
 
@@ -20,7 +20,8 @@ class RSSCollector(BaseCollector):
             feed = feedparser.parse(self.url)
 
             if feed.bozo and not feed.entries:
-                log.warning("RSS: ошибка парсинга %s: %s", self.name, feed.bozo_exception)
+                log.warning("RSS: ошибка парсинга %s: %s",
+                            self.name, feed.bozo_exception)
                 return articles
 
             for entry in feed.entries[:20]:  # максимум 20 за раз
@@ -31,12 +32,14 @@ class RSSCollector(BaseCollector):
                 published_at = datetime.now(timezone.utc)
                 if hasattr(entry, "published_parsed") and entry.published_parsed:
                     try:
-                        published_at = datetime(*entry.published_parsed[:6], tzinfo=timezone.utc)
+                        published_at = datetime(
+                            *entry.published_parsed[:6], tzinfo=timezone.utc)
                     except Exception:
                         pass
 
                 if title and url and text:
-                    articles.append(self._normalize_item(title, text, url, published_at))
+                    articles.append(self._normalize_item(
+                        title, text, url, published_at))
 
             log.info("RSS: собрано %d статей из %s", len(articles), self.name)
 

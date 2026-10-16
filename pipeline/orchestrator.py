@@ -2,16 +2,12 @@
 import logging
 
 from collectors.manager import run_collectors_once
-from pipeline.filter import filter_and_categorize
-from digest.summarizer import summarize_category
+from db.repository import (get_articles_for_digest, get_next_issue_number,
+                           mark_articles_used, save_digest)
 from digest.assembler import assemble_digest
 from digest.postprocess import postprocess_digest
-from db.repository import (
-    get_articles_for_digest,
-    mark_articles_used,
-    save_digest,
-    get_next_issue_number,
-)
+from digest.summarizer import summarize_category
+from pipeline.filter import filter_and_categorize
 
 log = logging.getLogger("pipeline.orchestrator")
 

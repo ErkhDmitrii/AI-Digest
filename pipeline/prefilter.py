@@ -27,7 +27,8 @@ def should_skip(title: str, text: str, published_at: datetime = None) -> bool:
 
     # Длина
     if len(text) < MIN_LENGTH:
-        log.debug("Предфильтр: слишком короткий (%d симв): %s", len(text), title[:50])
+        log.debug("Предфильтр: слишком короткий (%d симв): %s",
+                  len(text), title[:50])
         return True
 
     # Возраст

@@ -4,8 +4,8 @@ import logging
 from typing import List, Tuple
 
 from config.settings import settings
-from db.repository import get_unfiltered_articles, update_article_filter
 from db.models import Article
+from db.repository import get_unfiltered_articles, update_article_filter
 from llm.llm_client import LLMClient
 
 log = logging.getLogger("pipeline.filter")

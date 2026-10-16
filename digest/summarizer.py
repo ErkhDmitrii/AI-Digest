@@ -48,7 +48,8 @@ async def summarize_category(category: str, articles: List[Article]) -> str:
     try:
         client = LLMClient()
         summary = await client.chat(prompt, user_msg)
-        log.info("Саммари для категории '%s' готово (%d символов)", category, len(summary))
+        log.info("Саммари для категории '%s' готово (%d символов)",
+                 category, len(summary))
         return summary
     except Exception as e:
         log.error("Ошибка саммаризации категории '%s': %s", category, e)

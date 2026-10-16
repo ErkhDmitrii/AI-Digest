@@ -1,6 +1,6 @@
 """Web-парсер — собирает статьи с сайтов без RSS."""
 import logging
-from typing import List, Dict
+from typing import Dict, List
 
 import requests
 from bs4 import BeautifulSoup
@@ -80,7 +80,8 @@ class WebParser(BaseCollector):
             seen.add(url)
 
             body_tag = item.select_one(".views-field-body .field-content")
-            text = body_tag.get_text(separator=" ", strip=True) if body_tag else title
+            text = body_tag.get_text(
+                separator=" ", strip=True) if body_tag else title
             # Приклеиваем дату к тексту — пригодится фильтру
             date_tag = item.select_one(".views-field-created .field-content")
             if date_tag:

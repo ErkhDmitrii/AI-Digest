@@ -11,12 +11,13 @@ import logging
 import sys
 from pathlib import Path
 
-from llm.llm_client import LLMClient
-from pipeline.filter import _classify_relevance, _categorize
-from db.models import Article
 from config.settings import settings
+from db.models import Article
+from llm.llm_client import LLMClient
+from pipeline.filter import _categorize, _classify_relevance
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(message)s")
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s | %(levelname)s | %(message)s")
 log = logging.getLogger("calibrate")
 
 
@@ -80,7 +81,8 @@ async def calibrate(samples):
     # Метрики
     precision = tp / (tp + fp) if (tp + fp) > 0 else 0
     recall = tp / (tp + fn) if (tp + fn) > 0 else 0
-    f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0
+    f1 = 2 * precision * recall / \
+        (precision + recall) if (precision + recall) > 0 else 0
     cat_acc = cat_correct / cat_total if cat_total > 0 else 0
 
     print("\n" + "=" * 50)

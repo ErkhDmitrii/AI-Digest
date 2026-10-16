@@ -1,6 +1,6 @@
 """Постпроцессинг дайджеста — очистка, валидация, разбивка."""
-import re
 import logging
+import re
 from typing import List
 
 from config.settings import settings
@@ -36,7 +36,8 @@ def postprocess_digest(text: str) -> str:
     # Обрезаем лишнее в начале/конце
     text = text.strip()
 
-    log.info("Постпроцесс: дайджест %d символов, %d ссылок", len(text), len(urls))
+    log.info("Постпроцесс: дайджест %d символов, %d ссылок",
+             len(text), len(urls))
     return text
 
 
@@ -68,7 +69,8 @@ def split_for_telegram(text: str, max_chars: int = None) -> List[str]:
 
     # Добавляем номера частей
     if len(parts) > 1:
-        parts = [f"(Часть {i+1}/{len(parts)})\n\n{p}" for i, p in enumerate(parts)]
+        parts = [f"(Часть {i+1}/{len(parts)})\n\n{p}" for i,
+                 p in enumerate(parts)]
 
     log.info("Постпроцесс: разбит на %d частей", len(parts))
     return parts

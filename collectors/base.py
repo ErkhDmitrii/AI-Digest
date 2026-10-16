@@ -2,7 +2,7 @@
 import logging
 from abc import ABC, abstractmethod
 from datetime import datetime, timezone
-from typing import List, Dict
+from typing import Dict, List
 
 log = logging.getLogger("collectors.base")
 

@@ -6,8 +6,8 @@ import asyncio
 import logging
 import sys
 
-from bot.scheduler import init_scheduler
 from bot.polling import start_polling
+from bot.scheduler import init_scheduler
 from config.settings import settings
 from db.database import init_db
 

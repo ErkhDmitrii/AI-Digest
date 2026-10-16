@@ -1,18 +1,18 @@
 """Менеджер коллекторов — оркестрирует сбор данных из всех источников."""
 import asyncio
 import logging
-from typing import List, Dict
+from pathlib import Path
+from typing import Dict, List
 
 import yaml
-from pathlib import Path
 
 from collectors.rss_collector import RSSCollector
 from collectors.telegram_collector import TelegramCollector
 from collectors.web import WebParser
+from config.settings import settings
 from db.repository import save_article
 from pipeline.dedup import compute_text_hash, is_duplicate_text
 from pipeline.prefilter import should_skip
-from config.settings import settings
 
 log = logging.getLogger("collectors.manager")
 
@@ -83,5 +83,6 @@ async def run_collectors_once():
         except Exception as e:
             log.error("Ошибка сбора из %s: %s", source.get("name", "?"), e)
 
-    log.info("Сбор завершён: сохранено %d, пропущено %d", total_saved, total_skipped)
+    log.info("Сбор завершён: сохранено %d, пропущено %d",
+             total_saved, total_skipped)
     return total_saved

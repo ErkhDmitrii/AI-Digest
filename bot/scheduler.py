@@ -19,10 +19,12 @@ def init_scheduler() -> AsyncIOScheduler:
     # Задача: периодический сбор и фильтрация.
     # Если заданы минуты — используем их, иначе часы.
     if settings.COLLECT_INTERVAL_MINUTES > 0:
-        collect_trigger = IntervalTrigger(minutes=settings.COLLECT_INTERVAL_MINUTES)
+        collect_trigger = IntervalTrigger(
+            minutes=settings.COLLECT_INTERVAL_MINUTES)
         interval_label = f"{settings.COLLECT_INTERVAL_MINUTES} мин"
     else:
-        collect_trigger = IntervalTrigger(hours=settings.COLLECT_INTERVAL_HOURS)
+        collect_trigger = IntervalTrigger(
+            hours=settings.COLLECT_INTERVAL_HOURS)
         interval_label = f"{settings.COLLECT_INTERVAL_HOURS} ч"
 
     scheduler.add_job(

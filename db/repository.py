@@ -66,7 +66,8 @@ async def update_article_filter(
     confidence: Optional[float] = None,
 ):
     """Обновляет результат фильтрации и категоризации."""
-    cat_str = json.dumps(categories, ensure_ascii=False) if categories else None
+    cat_str = json.dumps(
+        categories, ensure_ascii=False) if categories else None
     status = "filtered_relevant" if is_relevant else "filtered_out"
     async with aiosqlite.connect(settings.DB_PATH) as db:
         await db.execute(
@@ -87,7 +88,7 @@ async def get_articles_for_digest(categories: Optional[List[str]] = None) -> dic
             "SELECT * FROM articles WHERE status = 'filtered_relevant' ORDER BY published_at DESC"
         )
         rows = await cursor.fetchall()
-    
+
     result = {cat: [] for cat in settings.CATEGORIES}
     for row in rows:
         art = _row_to_article(row)
@@ -191,7 +192,8 @@ def _row_to_article(row) -> Article:
         published_at=row["published_at"],
         collected_at=row["collected_at"],
         status=row["status"],
-        is_relevant=bool(row["is_relevant"]) if row["is_relevant"] is not None else None,
+        is_relevant=bool(row["is_relevant"]
+                         ) if row["is_relevant"] is not None else None,
         relevance_reason=row["relevance_reason"],
         categories=categories,
         category_confidence=row["category_confidence"],
