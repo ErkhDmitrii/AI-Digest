@@ -33,44 +33,20 @@ def postprocess_digest(text: str) -> str:
     if not urls:
         log.warning("Постпроцесс: в дайджесте нет ссылок на источники")
 
-    # Обрезаем лишнее в начале/конце
     text = text.strip()
 
-    log.info("Постпроцесс: дайджест %d символов, %d ссылок",
-             len(text), len(urls))
+    MAX_LEN = 4000
+    if len(text) > MAX_LEN:
+
+        cut_index = text.rfind('\n\n', 0, MAX_LEN)
+        if cut_index == -1:
+            cut_index = MAX_LEN
+
+        log.warning("Постпроцесс: текст был обрезан до %d символов", len(text))
+
+    log.info("Постпроцесс: дайджест %d символов, %d ссылок", len(text), len(urls))
     return text
 
 
 def split_for_telegram(text: str, max_chars: int = None) -> List[str]:
-    """Разбивает текст на части для Telegram (лимит 4096 символов).
-
-    Разбивка по пустым строкам, сохраняя заголовки.
-    """
-    if max_chars is None:
-        max_chars = settings.MAX_TELEGRAM_CHARS
-
-    if len(text) <= max_chars:
-        return [text]
-
-    parts = []
-    current_part = ""
-    paragraphs = text.split("\n\n")
-
-    for para in paragraphs:
-        if len(current_part) + len(para) + 2 <= max_chars:
-            current_part += para + "\n\n"
-        else:
-            if current_part:
-                parts.append(current_part.strip())
-            current_part = para + "\n\n"
-
-    if current_part:
-        parts.append(current_part.strip())
-
-    # Добавляем номера частей
-    if len(parts) > 1:
-        parts = [f"(Часть {i+1}/{len(parts)})\n\n{p}" for i,
-                 p in enumerate(parts)]
-
-    log.info("Постпроцесс: разбит на %d частей", len(parts))
-    return parts
+    return [text]

@@ -3,42 +3,20 @@
 
 sources:
   # === RSS-фиды ===
+  - name: "Revenue Service Georgia"
+    type: web
+    url: "https://rs.ge/Home-en"
+    parser: "generic"
+    whitelist: false
 
-  - name: "Грузия Online (apsny.ge)"
-    type: rss
-    url: "https://freenewsapi.ai/v1/rss?host=www.apsny.ge&size=50"
+  - name: "Commersant Georgia"
+    type: web
+    url: "https://commersant.ge/en"
+    parser: "generic"
     whitelist: false
 
   # === Telegram-каналы ===
-  - name: "Фаэтон | Грузия"
+  - name: "IP Georgia"
     type: telegram
-    channel: "faeton_georgia"
-    whitelist: false
-
-  - name: "NEWSGEORGIA"
-    type: telegram
-    channel: "NGnewsgeorgia"
-    whitelist: false
-
-  - name: "Батуми MY BATUMI"
-    type: telegram
-    channel: "mybatumi_info"
-    whitelist: false
-
-  - name: "Финансы и бизнес в Грузии"
-    type: telegram
-    channel: "financeingeorgia"
-    whitelist: false
-
-  # === Web-парсеры (сайты без RSS) ===
-  - name: "Matsne (Законодательство)"
-    type: web
-    url: "https://matsne.gov.ge"
-    parser: "matsne"
-    whitelist: true
-
-  - name: "Реестр предприятий"
-    type: web
-    url: "https://enreg.reestri.gov.ge/main.php"
-    parser: "enreg"
+    channel: "ipgeorgia"
     whitelist: false

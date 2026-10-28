@@ -70,7 +70,7 @@ class Settings:
     CATEGORY_LABELS: dict = field(default_factory=lambda: {
         "laws": "Законы и налоги",
         "banking": "Банки и платежи",
-        "market": "Рынок и коммерция Батуми",
+        "market": "Рынок и инфраструктура",
     })
 
     # Лимиты
