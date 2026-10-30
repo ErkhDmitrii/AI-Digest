@@ -46,7 +46,7 @@
 
 ### 1. Клонирование репозитория
 ```bash
-git clone https://github.com/ваш-username/ai-digest.git
+git clone https://github.com/ErkhDmitrii/ai-digest.git
 cd ai-digest
 ```
 
