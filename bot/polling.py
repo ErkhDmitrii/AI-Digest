@@ -47,7 +47,3 @@ async def start_polling():
         except Exception as e:
             log.error(f"Неизвестная ошибка: {str(e)}")
             raise
-
-# Дополнительные настройки можно добавить в конфиг:
-# POLLING_TIMEOUT = 60  # Таймаут запроса в секундах
-# RETRY_DELAY = 5  # Задержка между попытками

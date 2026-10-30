@@ -3,6 +3,7 @@ import logging
 from typing import Optional
 
 from aiogram import Bot, Dispatcher, F
+from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.filters import Command
 from aiogram.types import (CallbackQuery, InlineKeyboardButton,
                            InlineKeyboardMarkup, Message)
@@ -13,7 +14,8 @@ from db.repository import (get_next_issue_number, mark_digest_published,
 
 log = logging.getLogger("bot.handlers")
 
-bot = Bot(token=settings.BOT_TOKEN)
+session = AiohttpSession()
+bot = Bot(token=settings.BOT_TOKEN, session=session)
 dp = Dispatcher()
 
 # Хранилище ID последнего черновика для callback

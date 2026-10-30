@@ -6,6 +6,7 @@ import asyncio
 import logging
 import sys
 
+from bot.handlers import bot
 from bot.polling import start_polling
 from bot.scheduler import init_scheduler
 from config.settings import settings
@@ -41,6 +42,12 @@ async def main():
         log.info("Остановка сервиса...")
         scheduler.shutdown(wait=False)
         log.info("Сервис остановлен")
+    finally:
+        if scheduler.running:
+            scheduler.shutdown(wait=False)
+        log.info("Закрытие сессии бота...")
+        await bot.session.close()
+        log.info("Сервис успешно остановлен")
 
 
 if __name__ == "__main__":

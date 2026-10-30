@@ -28,11 +28,6 @@ def postprocess_digest(text: str) -> str:
     # Удаляем лишние пустые строки
     text = re.sub(r"\n{3,}", "\n\n", text)
 
-    # Валидация ссылок — проверяем что есть хотя бы одна
-    urls = re.findall(r"https?://[^\s)]+", text)
-    if not urls:
-        log.warning("Постпроцесс: в дайджесте нет ссылок на источники")
-
     text = text.strip()
 
     MAX_LEN = 4000
@@ -42,9 +37,10 @@ def postprocess_digest(text: str) -> str:
         if cut_index == -1:
             cut_index = MAX_LEN
 
+        text = text[:cut_index]
         log.warning("Постпроцесс: текст был обрезан до %d символов", len(text))
 
-    log.info("Постпроцесс: дайджест %d символов, %d ссылок", len(text), len(urls))
+    log.info("Постпроцесс: дайджест %d символов", len(text))
     return text
 
 
