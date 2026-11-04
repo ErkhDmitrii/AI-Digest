@@ -28,7 +28,6 @@ services:
       - .env
     volumes:
       - ./ai_digest_session.session:/app/ai_digest_session.session
-      - ./ai_digest.log:/app/ai_digest.log
 
 volumes:
   pgdata:
