@@ -35,7 +35,7 @@ class WebParser(BaseCollector):
                 self.url, 
                 headers=headers, 
                 impersonate="chrome124", 
-                timeout=30
+                timeout=60
             )
             response.raise_for_status()
 

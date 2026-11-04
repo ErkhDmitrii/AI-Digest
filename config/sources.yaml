@@ -15,6 +15,12 @@ sources:
     parser: "generic"
     whitelist: false
 
+  - name: "NewsGeorgia (Экономика)"
+    type: web
+    url: "https://www.newsgeorgia.ge/jekonomika/"
+    parser: "generic"
+    whitelist: false
+
   # === Telegram-каналы ===
   - name: "IP Georgia"
     type: telegram

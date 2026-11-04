@@ -84,6 +84,7 @@ async def get_articles_for_digest(categories: Optional[List[str]] = None) -> dic
     """Возвращает статьи для дайджеста, сгруппированные по категориям."""
     async with aiosqlite.connect(settings.DB_PATH) as db:
         db.row_factory = aiosqlite.Row
+        # Берем ТОЛЬКО те статьи, которые прошли фильтр и еще не были в дайджесте
         cursor = await db.execute(
             "SELECT * FROM articles WHERE status = 'filtered_relevant' ORDER BY published_at DESC"
         )
@@ -100,12 +101,14 @@ async def get_articles_for_digest(categories: Optional[List[str]] = None) -> dic
 
 
 async def mark_articles_used():
-    """Отмечает статьи как использованные в дайджесте."""
+    """Отмечает статьи как использованные в дайджесте (чтобы не брать их снова)."""
     async with aiosqlite.connect(settings.DB_PATH) as db:
+        # Меняем статус на 'digested', чтобы get_articles_for_digest их больше не видел
         await db.execute(
             "UPDATE articles SET status = 'digested' WHERE status = 'filtered_relevant'"
         )
         await db.commit()
+        log.info("Статьи помечены как использованные (digested)")
 
 
 async def save_digest(issue_number: int, content: str) -> int:

@@ -57,3 +57,4 @@ Thumbs.db
 
 # Sample data
 sample.csv
+.ruff_cache

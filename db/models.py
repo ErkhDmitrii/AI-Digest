@@ -18,10 +18,12 @@ class Article:
     collected_at: Optional[datetime] = None
     status: str = "new"
     is_relevant: Optional[bool] = None
+    is_used_in_digest: bool = False 
     relevance_reason: Optional[str] = None
     categories: Optional[List[str]] = None
     category_confidence: Optional[float] = None
     is_whitelist: bool = False
+    
 
 
 @dataclass

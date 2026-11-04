@@ -13,7 +13,7 @@ log = logging.getLogger("pipeline.orchestrator")
 
 
 async def run_full_pipeline() -> str:
-    """Полный цикл: сбор → фильтр → саммаризация → сборка → постпроцесс.
+    """Полный цикл: сбор → фильтр → саммаризация → сборка → постпроцессинг.
     Возвращает готовый текст дайджеста.
     """
     log.info("=== Запуск полного пайплайна ===")
@@ -30,6 +30,12 @@ async def run_full_pipeline() -> str:
     # 3. Получение статей для дайджеста
     log.info("Шаг 3: Подготовка статей для дайджеста")
     articles_by_cat = await get_articles_for_digest()
+
+    # Проверка: если новых статей нет вообще, прерываем пайплайн
+    total_articles = sum(len(arts) for arts in articles_by_cat.values())
+    if total_articles == 0:
+        log.warning("Нет новых статей для дайджеста. Пайплайн остановлен.")
+        return "Нет новых статей для дайджеста."
 
     # 4. Саммаризация по категориям
     log.info("Шаг 4: Саммаризация")
@@ -54,7 +60,7 @@ async def run_full_pipeline() -> str:
     log.info("Шаг 7: Сохранение черновика")
     await save_digest(issue_number, final_text)
 
-    # 8. Отметка статей как использованных
+    log.info("Шаг 8: Отметка статей как использованных")
     await mark_articles_used()
 
     log.info("=== Пайплайн завершён, выпуск #%d ===", issue_number)

@@ -1,5 +1,4 @@
 """LLM-фильтрация и категоризация статей."""
-import json
 import logging
 from typing import List, Tuple
 
@@ -39,8 +38,8 @@ async def filter_and_categorize() -> dict:
                 article.id, is_relevant, reason, categories, cat_confidence
             )
 
-            log.debug(
-                "Статья %d: relevant=%s, cats=%s, reason=%s",
+            log.info(
+                "🤖 ИИ решил по статье [%d]: relevant=%s, cats=%s, ПРИЧИНА: %s",
                 article.id, is_relevant, categories, reason
             )
 
@@ -68,6 +67,8 @@ async def _classify_relevance(client: LLMClient, article: Article) -> Tuple[bool
         f"Заголовок: {article.title}\n"
         f"Текст: {article.text[:2000]}"
     )
+
+    log.info("📥 Отправляем на анализ: %s", article.title)
 
     try:
         result = await client.chat_json(prompt, user_msg)
