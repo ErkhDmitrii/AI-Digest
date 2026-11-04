@@ -28,6 +28,6 @@ jobs:
             
             # Пересобираем и перезапускаем Docker
             # (Если вы заходите под обычным пользователем, добавьте sudo перед docker-compose)
-            docker-compose up -d --build
+            docker compose up -d --build
             
             echo "✅ Деплой успешно завершен!"
