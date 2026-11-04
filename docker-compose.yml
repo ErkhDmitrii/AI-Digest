@@ -1,0 +1,34 @@
+name: ai-digest
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: ai_digest_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ai_digest
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  ai-digest-bot:
+    build: .
+    container_name: ai_digest_bot
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy # Ждем, пока БД полностью запустится
+    env_file:
+      - .env
+    volumes:
+      - ./ai_digest_session.session:/app/ai_digest_session.session
+      - ./ai_digest.log:/app/ai_digest.log
+
+volumes:
+  pgdata:

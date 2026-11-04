@@ -26,8 +26,7 @@ log = logging.getLogger("ai-digest")
 async def main():
     log.info("Запуск AI-Дайджест v1.0")
 
-    # 1. Инициализация БД
-    init_db()
+    await init_db()
 
     # 2. Инициализация планировщика (AsyncIOScheduler)
     scheduler = init_scheduler()
@@ -40,8 +39,6 @@ async def main():
         await start_polling()
     except (KeyboardInterrupt, SystemExit):
         log.info("Остановка сервиса...")
-        scheduler.shutdown(wait=False)
-        log.info("Сервис остановлен")
     finally:
         if scheduler.running:
             scheduler.shutdown(wait=False)

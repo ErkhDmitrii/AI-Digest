@@ -45,9 +45,12 @@ class Settings:
     DIGEST_HOUR: int = field(
         default_factory=lambda: int(os.getenv("DIGEST_HOUR", "8")))
 
-    # DB
-    DB_PATH: str = field(
-        default_factory=lambda: os.getenv("DB_PATH", "ai_digest.db"))
+    # DB (POSTGRESQL)
+    DB_HOST: str = field(default_factory=lambda: os.getenv("DB_HOST", "localhost"))
+    DB_PORT: int = field(default_factory=lambda: int(os.getenv("DB_PORT", "5432")))
+    DB_NAME: str = field(default_factory=lambda: os.getenv("DB_NAME", "ai_digest"))
+    DB_USER: str = field(default_factory=lambda: os.getenv("DB_USER", "postgres"))
+    DB_PASSWORD: str = field(default_factory=lambda: os.getenv("DB_PASSWORD", "postgres"))
 
     # Paths
     PROJECT_ROOT: Path = field(default_factory=lambda: Path(
