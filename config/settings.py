@@ -12,8 +12,9 @@ load_dotenv()
 class Settings:
     # Telegram Bot
     BOT_TOKEN: str = field(default_factory=lambda: os.getenv("BOT_TOKEN", ""))
-    ADMIN_CHAT_ID: int = field(
-        default_factory=lambda: int(os.getenv("ADMIN_CHAT_ID", "0")))
+    ADMIN_CHAT_IDS: list[int] = field(default_factory=lambda: [
+        int(x.strip()) for x in os.getenv("ADMIN_CHAT_IDS", "0").split(",") if x.strip()
+    ])
     TARGET_CHANNEL_ID: int = field(
         default_factory=lambda: int(os.getenv("TARGET_CHANNEL_ID", "0")))
     POLLING_TIMEOUT: int = field(default_factory=lambda: int(

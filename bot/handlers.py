@@ -9,8 +9,9 @@ from aiogram.types import (CallbackQuery, InlineKeyboardButton,
                            InlineKeyboardMarkup, Message)
 
 from config.settings import settings
-from db.repository import (get_next_issue_number, mark_digest_published,
-                           save_digest, update_digest_decision)
+from db.repository import (get_digest_by_id, get_next_issue_number,
+                           mark_digest_published, save_digest,
+                           update_digest_decision)
 
 log = logging.getLogger("bot.handlers")
 
@@ -23,7 +24,7 @@ _pending_digests: dict = {}  # {message_id: digest_id}
 
 
 async def send_draft_to_admin(digest_text: str):
-    """Отправляет черновик дайджеста в админ-чат с inline-кнопками."""
+    """Отправляет черновик дайджеста всем админам из списка с inline-кнопками."""
     from digest.postprocess import split_for_telegram
 
     parts = split_for_telegram(digest_text)
@@ -43,24 +44,30 @@ async def send_draft_to_admin(digest_text: str):
         ]
     ])
 
-    # Отправляем первую часть с кнопками
-    msg = await bot.send_message(
-        chat_id=settings.ADMIN_CHAT_ID,
-        text=parts[0],
-        reply_markup=keyboard,
-        parse_mode="Markdown",
-    )
+    # ЦИКЛ ПО ВСЕМ АДМИНАМ
+    for admin_id in settings.ADMIN_CHAT_IDS:
+        try:
+            # Отправляем первую часть с кнопками
+            msg = await bot.send_message(
+                chat_id=admin_id,
+                text=parts[0],
+                reply_markup=keyboard,
+                parse_mode="Markdown",
+            )
 
-    # Дополнительные части без кнопок
-    for part in parts[1:]:
-        await bot.send_message(
-            chat_id=settings.ADMIN_CHAT_ID,
-            text=part,
-            parse_mode="Markdown",
-        )
+            _pending_digests[msg.message_id] = digest_id
 
-    _pending_digests[msg.message_id] = digest_id
-    log.info("Черновик #%d отправлен в админ-чат", issue_number)
+
+            for part in parts[1:]:
+                await bot.send_message(
+                    chat_id=admin_id,
+                    text=part,
+                    parse_mode="Markdown",
+                )
+        except Exception as e:
+            log.error(f"Не удалось отправить дайджест админу {admin_id}: {e}")
+
+    log.info("Черновик #%d отправлен всем админам", issue_number)
 
 
 @dp.message(Command("start"))
@@ -80,7 +87,13 @@ async def cb_publish(callback: CallbackQuery):
     from db.repository import get_digest_by_id
     digest = await get_digest_by_id(digest_id)
     if not digest:
-        await callback.answer("Дайджест не найден")
+        await callback.answer("Дайджест не найден", show_alert=True)
+        return
+        
+    # Защита: если уже опубликован, не публикуем повторно
+    if digest.status == "published":
+        await callback.answer("Этот дайджест уже был опубликован!", show_alert=True)
+        await callback.message.edit_reply_markup(reply_markup=None)
         return
 
     from digest.postprocess import split_for_telegram
@@ -102,7 +115,7 @@ async def cb_publish(callback: CallbackQuery):
 
     except Exception as e:
         log.error("Ошибка публикации: %s", e)
-        await callback.answer(f"Ошибка: {e}")
+        await callback.answer(f"Ошибка: {e}", show_alert=True)
 
 
 @dp.callback_query(F.data.startswith("edit:"))
@@ -121,6 +134,15 @@ async def cb_edit(callback: CallbackQuery):
 async def cb_reject(callback: CallbackQuery):
     """Отклонение дайджеста."""
     digest_id = int(callback.data.split(":")[1])
+    
+    digest = await get_digest_by_id(digest_id)
+
+    # Защита: если уже обработан, не отклоняем повторно
+    if digest and digest.status in ["published", "decided"]:
+        await callback.answer("Этот дайджест уже обработан!", show_alert=True)
+        await callback.message.edit_reply_markup(reply_markup=None)
+        return
+
     await update_digest_decision(digest_id, "rejected")
     await callback.answer("❌ Отклонён")
     await callback.message.edit_reply_markup(reply_markup=None)
