@@ -2,7 +2,7 @@
 import hashlib
 import logging
 
-from db.database import pool
+from db import database
 
 log = logging.getLogger("pipeline.dedup")
 
@@ -19,7 +19,7 @@ async def is_duplicate_text(text_hash: str) -> bool:
     if not text_hash:
         return False
 
-    async with pool.acquire() as conn:
+    async with database.pool.acquire() as conn:
         # Используем $1 (синтаксис PostgreSQL)
         row = await conn.fetchval(
             "SELECT id FROM articles WHERE text_hash = $1 LIMIT 1",

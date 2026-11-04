@@ -8,7 +8,7 @@ from typing import List, Optional
 import asyncpg
 
 from config.settings import settings
-from db.database import pool
+from db import database
 from db.models import Article, Digest
 
 log = logging.getLogger("db.repository")
@@ -23,7 +23,7 @@ async def save_article(
 ) -> bool:
     url_h = _url_hash(url)
     try:
-        async with pool.acquire() as conn:
+        async with database.pool.acquire() as conn:
             await conn.execute(
                 """INSERT INTO articles 
                    (source_name, source_type, title, text, url, url_hash, text_hash, published_at, is_whitelist)
@@ -36,7 +36,7 @@ async def save_article(
         return False
 
 async def get_unfiltered_articles() -> List[Article]:
-    async with pool.acquire() as conn:
+    async with database.pool.acquire() as conn:
         rows = await conn.fetch("SELECT * FROM articles WHERE status = 'new' ORDER BY collected_at")
         return [_row_to_article(r) for r in rows]
 
@@ -46,7 +46,7 @@ async def update_article_filter(
 ):
     cat_str = json.dumps(categories, ensure_ascii=False) if categories else None
     status = "filtered_relevant" if is_relevant else "filtered_out"
-    async with pool.acquire() as conn:
+    async with database.pool.acquire() as conn:
         await conn.execute(
             """UPDATE articles SET 
                status = $1, is_relevant = $2, relevance_reason = $3,
@@ -56,7 +56,7 @@ async def update_article_filter(
         )
 
 async def get_articles_for_digest(categories: Optional[List[str]] = None) -> dict:
-    async with pool.acquire() as conn:
+    async with database.pool.acquire() as conn:
         rows = await conn.fetch("SELECT * FROM articles WHERE status = 'filtered_relevant' ORDER BY published_at DESC")
 
     result = {cat: [] for cat in settings.CATEGORIES}
@@ -69,12 +69,12 @@ async def get_articles_for_digest(categories: Optional[List[str]] = None) -> dic
     return result
 
 async def mark_articles_used():
-    async with pool.acquire() as conn:
+    async with database.pool.acquire() as conn:
         await conn.execute("UPDATE articles SET status = 'digested' WHERE status = 'filtered_relevant'")
         log.info("Статьи помечены как использованные (digested)")
 
 async def save_digest(issue_number: int, content: str) -> int:
-    async with pool.acquire() as conn:
+    async with database.pool.acquire() as conn:
         row = await conn.fetchrow(
             "INSERT INTO digests (issue_number, content) VALUES ($1, $2) RETURNING id",
             issue_number, content
@@ -82,7 +82,7 @@ async def save_digest(issue_number: int, content: str) -> int:
         return row["id"]
 
 async def update_digest_decision(digest_id: int, decision: str, final_text: Optional[str] = None):
-    async with pool.acquire() as conn:
+    async with database.pool.acquire() as conn:
         if final_text:
             await conn.execute(
                 "UPDATE digests SET status = $1, admin_decision = $2, final_text = $3 WHERE id = $4",
@@ -95,19 +95,19 @@ async def update_digest_decision(digest_id: int, decision: str, final_text: Opti
             )
 
 async def mark_digest_published(digest_id: int):
-    async with pool.acquire() as conn:
+    async with database.pool.acquire() as conn:
         await conn.execute(
             "UPDATE digests SET status = 'published', published_at = $1 WHERE id = $2",
             datetime.now(), digest_id
         )
 
 async def get_next_issue_number() -> int:
-    async with pool.acquire() as conn:
+    async with database.pool.acquire() as conn:
         count = await conn.fetchval("SELECT COUNT(*) FROM digests")
         return (count or 0) + 1
 
 async def get_digest_by_id(digest_id: int) -> Optional[Digest]:
-    async with pool.acquire() as conn:
+    async with database.pool.acquire() as conn:
         row = await conn.fetchrow("SELECT * FROM digests WHERE id = $1", digest_id)
         if row:
             return Digest(
@@ -121,7 +121,6 @@ def _row_to_article(row) -> Article:
     categories = None
     if row["categories"]:
         try:
-
             categories = json.loads(row["categories"]) if isinstance(row["categories"], str) else row["categories"]
         except Exception:
             categories = None
