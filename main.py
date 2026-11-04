@@ -16,8 +16,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(name)s | %(levelname)s | %(message)s",
     handlers=[
-        logging.StreamHandler(sys.stdout),
-        logging.FileHandler("ai_digest.log", encoding="utf-8"),
+        logging.StreamHandler(sys.stdout)
     ],
 )
 log = logging.getLogger("ai-digest")
