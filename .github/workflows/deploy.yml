@@ -1,0 +1,33 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main # Если ваша ветка называется master, замените на master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            # Переходим в папку проекта на сервере
+            cd ${{ secrets.VPS_DEPLOY_PATH }}
+            
+            # Обновляем код из Git
+            git pull origin main
+            
+            # Пересобираем и перезапускаем Docker
+            # (Если вы заходите под обычным пользователем, добавьте sudo перед docker-compose)
+            docker-compose up -d --build
+            
+            echo "✅ Деплой успешно завершен!"
