@@ -1,6 +1,5 @@
 """Обработчики Telegram-бота — модерация и публикация."""
 import logging
-from typing import Optional
 
 from aiogram import Bot, Dispatcher, F
 from aiogram.client.session.aiohttp import AiohttpSession
@@ -84,20 +83,20 @@ async def cb_publish(callback: CallbackQuery):
     """Публикация дайджеста в целевой канал."""
     digest_id = int(callback.data.split(":")[1])
 
-    from db.repository import get_digest_by_id
     digest = await get_digest_by_id(digest_id)
     if not digest:
         await callback.answer("Дайджест не найден", show_alert=True)
         return
         
-    # Защита: если уже опубликован, не публикуем повторно
     if digest.status == "published":
         await callback.answer("Этот дайджест уже был опубликован!", show_alert=True)
         await callback.message.edit_reply_markup(reply_markup=None)
         return
 
     from digest.postprocess import split_for_telegram
-    parts = split_for_telegram(digest.content)
+
+    text_to_publish = digest.final_text if digest.final_text else digest.content
+    parts = split_for_telegram(text_to_publish)
 
     try:
         for part in parts:
@@ -153,18 +152,25 @@ async def cb_reject(callback: CallbackQuery):
 async def handle_edited_text(message: Message):
     """Обрабатывает исправленный текст от админа."""
     key = f"edit_{message.from_user.id}"
+    # ИСПРАВЛЕНИЕ: Если бот не ждет текст, он теперь явно об этом скажет
     if key not in _pending_digests:
+        await message.answer("⚠️ Я не жду от вас текст для редактирования. Нажмите кнопку «✏️ Редактировать» под нужным черновиком заново.")
         return
 
     digest_id = _pending_digests.pop(key)
-    await update_digest_decision(digest_id, "edited", final_text=message.text)
+    
+    try:
+        await update_digest_decision(digest_id, "edited", final_text=message.text)
+        log.info(f"Текст дайджеста ID {digest_id} успешно обновлен")
+    except Exception as e:
+        log.error(f"Ошибка при обновлении БД: {e}")
+        await message.answer(f"Ошибка при сохранении: {e}")
+        return
 
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [
-            InlineKeyboardButton(text="✅ Опубликовать",
-                                 callback_data=f"pub:{digest_id}"),
-            InlineKeyboardButton(text="❌ Отклонить",
-                                 callback_data=f"rej:{digest_id}"),
+            InlineKeyboardButton(text="✅ Опубликовать", callback_data=f"pub:{digest_id}"),
+            InlineKeyboardButton(text="❌ Отклонить", callback_data=f"rej:{digest_id}"),
         ]
     ])
 

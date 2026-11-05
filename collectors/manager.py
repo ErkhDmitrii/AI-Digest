@@ -1,7 +1,7 @@
 """Менеджер коллекторов — оркестрирует сбор данных из всех источников."""
 import asyncio
 import logging
-from pathlib import Path
+
 from typing import Dict, List
 
 import yaml
