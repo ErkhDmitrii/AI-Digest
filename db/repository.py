@@ -2,7 +2,7 @@
 import hashlib
 import json
 import logging
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import List, Optional
 
 import asyncpg
@@ -25,12 +25,7 @@ async def save_article(
 
 
     if published_at:
-        if published_at.tzinfo is None:
-            # Если дата без пояса, считаем, что это UTC
-            published_at = published_at.replace(tzinfo=timezone.utc)
-        else:
-            # Если с поясом, конвертируем в UTC
-            published_at = published_at.astimezone(timezone.utc)
+        published_at = published_at.replace(tzinfo=None)
 
     try:
         async with database.pool.acquire() as conn:
