@@ -148,12 +148,11 @@ async def cb_reject(callback: CallbackQuery):
     log.info("Дайджест #%d отклонён", digest_id)
 
 
-@dp.message(F.text)
+@dp.message(F.chat.type == "private", F.text)
 async def handle_edited_text(message: Message):
-    """Обрабатывает исправленный текст от админа."""
     key = f"edit_{message.from_user.id}"
-    # ИСПРАВЛЕНИЕ: Если бот не ждет текст, он теперь явно об этом скажет
     if key not in _pending_digests:
+
         await message.answer("⚠️ Я не жду от вас текст для редактирования. Нажмите кнопку «✏️ Редактировать» под нужным черновиком заново.")
         return
 
