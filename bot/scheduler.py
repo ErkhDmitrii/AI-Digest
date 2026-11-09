@@ -1,5 +1,4 @@
 """Планировщик задач — APScheduler (AsyncIOScheduler)."""
-import asyncio
 import logging
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler

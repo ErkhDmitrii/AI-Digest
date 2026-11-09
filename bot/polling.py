@@ -1,7 +1,6 @@
 import asyncio
 import logging
 
-from aiogram import Bot, Dispatcher
 from aiogram.exceptions import TelegramAPIError, TelegramNetworkError
 
 from bot.handlers import bot, dp

@@ -3,7 +3,6 @@ import logging
 import re
 from typing import List
 
-from config.settings import settings
 
 log = logging.getLogger("digest.postprocess")
 

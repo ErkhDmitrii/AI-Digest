@@ -1,5 +1,4 @@
 """Менеджер коллекторов — оркестрирует сбор данных из всех источников."""
-import asyncio
 import logging
 
 from typing import Dict, List

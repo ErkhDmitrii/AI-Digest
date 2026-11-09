@@ -2,43 +2,41 @@
 import logging
 from typing import Dict
 
-import aiosqlite
-
-from config.settings import settings
+from db import database
 
 log = logging.getLogger("utils.metrics")
 
 
 async def get_funnel_metrics() -> Dict[str, int]:
     """Возвращает метрики воронки: собрано → фильтр → дайджест → решение."""
-    async with aiosqlite.connect(settings.DB_PATH) as db:
+    
+    # Используем пул подключений к PostgreSQL
+    async with database.pool.acquire() as conn:
         # Всего собрано
-        cursor = await db.execute("SELECT COUNT(*) FROM articles")
-        collected = (await cursor.fetchone())[0]
+        collected = await conn.fetchval("SELECT COUNT(*) FROM articles")
 
-        # Прошли фильтр
-        cursor = await db.execute(
-            "SELECT COUNT(*) FROM articles WHERE is_relevant = 1"
+
+        filtered = await conn.fetchval(
+            "SELECT COUNT(*) FROM articles WHERE is_relevant = TRUE"
         )
-        filtered = (await cursor.fetchone())[0]
 
         # В дайджесте
-        cursor = await db.execute(
+        in_digest = await conn.fetchval(
             "SELECT COUNT(*) FROM articles WHERE status = 'digested'"
         )
-        in_digest = (await cursor.fetchone())[0]
 
         # Опубликовано
-        cursor = await db.execute(
+        published = await conn.fetchval(
             "SELECT COUNT(*) FROM digests WHERE status = 'published'"
         )
-        published = (await cursor.fetchone())[0]
+
 
     metrics = {
-        "collected": collected,
-        "filtered_relevant": filtered,
-        "in_digest": in_digest,
-        "published_digests": published,
+        "collected": collected or 0,
+        "filtered_relevant": filtered or 0,
+        "in_digest": in_digest or 0,
+        "published_digests": published or 0,
     }
+    
     log.info("Метрики: %s", metrics)
     return metrics
