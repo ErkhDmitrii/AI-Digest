@@ -32,6 +32,30 @@ async def send_draft_to_admin(digest_text: str):
     issue_number = await get_next_issue_number()
     digest_id = await save_digest(issue_number, digest_text)
 
+    # ПРОВЕРКА: Если в тексте нет ни одной новости (нет иконки 📌) 
+    # или если это системное сообщение об отсутствии новостей
+    if "Нет новых статей" in digest_text or "📌" not in digest_text:
+        for admin_id in settings.ADMIN_CHAT_IDS:
+            try:
+                # Отправляем просто текст БЕЗ КНОПОК
+                await bot.send_message(
+                    chat_id=admin_id,
+                    text=parts[0],
+                    parse_mode="Markdown",
+                )
+                for part in parts[1:]:
+                    await bot.send_message(
+                        chat_id=admin_id,
+                        text=part,
+                        parse_mode="Markdown",
+                    )
+            except Exception as e:
+                log.error(f"Не удалось отправить сообщение админу {admin_id}: {e}")
+        
+        log.info("Отправлено уведомление об отсутствии новостей (без кнопок)")
+        return
+
+    # Если новости есть — создаем кнопки как обычно
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(text="✅ Опубликовать",
