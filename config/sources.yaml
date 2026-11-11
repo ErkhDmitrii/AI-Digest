@@ -32,11 +32,6 @@ sources:
     parser: "generic"
     whitelist: false
 
-  - name: "BM.GE (Бизнес)"
-    type: web
-    url: "https://bm.ge/ru/category/business"
-    parser: "generic"
-    whitelist: false
 
   - name: "Forbes Georgia"
     type: web
