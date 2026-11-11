@@ -41,6 +41,6 @@ def assemble_digest(issue_number: int, summaries: dict) -> str:
 
     # 4. Добавляем подпись в конце
     lines.append("")
-    lines.append("Будьте в курсе с дайджестом от Solidus (https://t.me/SOLIDUS_business_club)")
+    lines.append("Будьте в курсе с дайджестом от [Solidus](https://t.me/SOLIDUS_business_club)")
 
     return "\n".join(lines)

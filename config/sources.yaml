@@ -2,7 +2,6 @@
 # Типы: rss, telegram, web
 
 sources:
-  # === RSS-фиды ===
   - name: "Revenue Service Georgia"
     type: web
     url: "https://rs.ge/Home-en"
@@ -21,6 +20,36 @@ sources:
     parser: "generic"
     whitelist: false
 
+  - name: "Faeton (Макроэкономика)"
+    type: web
+    url: "https://faetongeorgia.com/news/category/macroeconomics/"
+    parser: "generic"
+    whitelist: false
+
+  - name: "Faeton (Недвижимость)"
+    type: web
+    url: "https://faetongeorgia.com/news/category/real-estate/"
+    parser: "generic"
+    whitelist: false
+
+  - name: "BM.GE (Бизнес)"
+    type: web
+    url: "https://bm.ge/ru/category/business"
+    parser: "generic"
+    whitelist: false
+
+  - name: "Forbes Georgia"
+    type: web
+    url: "https://forbes.ge/"
+    parser: "generic"
+    whitelist: false
+
+  - name: "The FINANCIAL (Georgian News)"
+    type: web
+    url: "https://finchannel.com/category/georgian-local-news/"
+    parser: "generic"
+    whitelist: false
+
   # === Telegram-каналы ===
   - name: "IP Georgia"
     type: telegram
@@ -30,4 +59,9 @@ sources:
   - name: "Финансы и бизнес в Грузии"
     type: telegram
     channel: "financeingeorgia"
+    whitelist: false
+
+  - name: "Фаэтон | Грузия"
+    type: telegram
+    channel: "faeton_georgia"
     whitelist: false
