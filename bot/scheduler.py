@@ -16,7 +16,6 @@ def init_scheduler() -> AsyncIOScheduler:
     scheduler = AsyncIOScheduler(timezone=settings.TIMEZONE)
 
     # Задача: периодический сбор и фильтрация.
-    # Если заданы минуты — используем их, иначе часы.
     if settings.COLLECT_INTERVAL_MINUTES > 0:
         collect_trigger = IntervalTrigger(
             minutes=settings.COLLECT_INTERVAL_MINUTES)
@@ -34,18 +33,24 @@ def init_scheduler() -> AsyncIOScheduler:
         replace_existing=True,
     )
 
-    # Задача: сборка и отправка дайджеста (ежедневно в DIGEST_HOUR)
     scheduler.add_job(
         scheduled_digest,
-        CronTrigger(hour=settings.DIGEST_HOUR, minute=0),
+        CronTrigger(
+            day_of_week=settings.DIGEST_DAY_OF_WEEK,
+            hour=settings.DIGEST_HOUR, 
+            minute=0
+        ),
         id="scheduled_digest",
         name="Дайджест",
         replace_existing=True,
     )
 
+    days = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+    day_label = days[settings.DIGEST_DAY_OF_WEEK] if 0 <= settings.DIGEST_DAY_OF_WEEK <= 6 else str(settings.DIGEST_DAY_OF_WEEK)
+
     log.info(
-        "Jobs: collect каждые %s, digest в %02d:00 (%s)",
-        interval_label, settings.DIGEST_HOUR, settings.TIMEZONE
+        "Jobs: collect каждые %s, digest раз в неделю (%s) в %02d:00 (%s)",
+        interval_label, day_label, settings.DIGEST_HOUR, settings.TIMEZONE
     )
 
     return scheduler

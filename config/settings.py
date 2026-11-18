@@ -40,11 +40,13 @@ class Settings:
     TIMEZONE: str = field(
         default_factory=lambda: os.getenv("TIMEZONE", "Asia/Tbilisi"))
     COLLECT_INTERVAL_HOURS: int = field(
-        default_factory=lambda: int(os.getenv("COLLECT_INTERVAL_HOURS", "2")))
+        default_factory=lambda: int(os.getenv("COLLECT_INTERVAL_HOURS", "1")))
     COLLECT_INTERVAL_MINUTES: int = field(
         default_factory=lambda: int(os.getenv("COLLECT_INTERVAL_MINUTES", "0")))
     DIGEST_HOUR: int = field(
         default_factory=lambda: int(os.getenv("DIGEST_HOUR", "8")))
+    DIGEST_DAY_OF_WEEK: int = field(
+        default_factory=lambda: int(os.getenv("DIGEST_DAY_OF_WEEK", "6")))
 
     # DB (POSTGRESQL)
     DB_HOST: str = field(default_factory=lambda: os.getenv("DB_HOST", "localhost"))
